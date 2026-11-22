@@ -1,0 +1,78 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Edit Request | WorkflowPro{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="dashboard-title">Edit Request</h2>
+        <p class="dashboard-subtitle">
+            Update your draft business request.
+        </p>
+    </div>
+
+    <a href="{% url 'my_requests' %}" class="btn btn-outline-secondary">
+        Back to My Requests
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        {% if errors %}
+            <div class="alert alert-danger">
+                {% for error in errors %}
+                    <p class="mb-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="title" class="form-label">
+                    Request Title
+                </label>
+
+                <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    class="form-control"
+                    value="{{ item.title }}"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    id="description"
+                    class="form-control"
+                    rows="5"
+                    required
+                >{{ item.description }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+
+            <a href="{% url 'my_requests' %}"
+               class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,308 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Requests | WorkflowPro{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="dashboard-title">My Requests</h2>
+        <p class="dashboard-subtitle">
+            View and track all your business requests.
+        </p>
+    </div>
+
+    <a href="{% url 'request_create' %}" class="btn btn-primary new-request-btn">
+        <i class="bi bi-plus-lg me-2"></i>
+        New Request
+    </a>
+</div>
+
+<!-- Request Statistics -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="card dashboard-stat-card border-0 shadow-sm">
+            <div class="card-body">
+                <p class="stat-label">Total Requests</p>
+                <h2 class="stat-number">{{ total_requests }}</h2>
+                <small class="text-muted">All requests</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card dashboard-stat-card border-0 shadow-sm">
+            <div class="card-body">
+                <p class="stat-label">Pending Requests</p>
+                <h2 class="stat-number">{{ pending_requests }}</h2>
+                <small class="text-muted">Requests awaiting review</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card dashboard-stat-card border-0 shadow-sm">
+            <div class="card-body">
+                <p class="stat-label">Completed Requests</p>
+                <h2 class="stat-number">{{ completed_requests }}</h2>
+                <small class="text-muted">All completed requests</small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Requests Table -->
+<div class="card recent-requests-card border-0 shadow-sm">
+
+<!-- Search and Filter Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+
+        <form method="GET" action="{% url 'my_requests' %}">
+            <div class="row g-3 align-items-end">
+
+                <!-- Search -->
+                <div class="col-md-6">
+                    <label for="search" class="form-label fw-semibold">
+                        Search Requests
+                    </label>
+
+                    <input
+                        type="text"
+                        name="search"
+                        id="search"
+                        class="form-control"
+                        placeholder="Enter request title..."
+                        value="{{ search_query }}"
+                    >
+                </div>
+
+                <!-- Status Filter -->
+                <div class="col-md-4">
+                    <label for="status" class="form-label fw-semibold">
+                        Filter by Status
+                    </label>
+
+                    <select name="status" id="status" class="form-select">
+                        <option value="">All Statuses</option>
+
+                        <option value="draft"
+                            {% if status_filter == 'draft' %}selected{% endif %}>
+                            Draft
+                        </option>
+
+                        <option value="submitted"
+                            {% if status_filter == 'submitted' %}selected{% endif %}>
+                            Submitted
+                        </option>
+
+                        <option value="approved"
+                            {% if status_filter == 'approved' %}selected{% endif %}>
+                            Approved
+                        </option>
+
+                        <option value="rejected"
+                            {% if status_filter == 'rejected' %}selected{% endif %}>
+                            Rejected
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                        <i class="bi bi-search"></i>
+                        Search
+                    </button>
+
+                    <a href="{% url 'my_requests' %}"
+                       class="btn btn-outline-secondary w-100">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+    <div class="card-header bg-white border-0 p-4">
+        <h5 class="fw-bold mb-1">All Requests</h5>
+        <p class="text-muted small mb-0">
+            A complete record of your business requests.
+        </p>
+    </div>
+
+    {% if requests %}
+
+    <div class="table-responsive">
+
+        <table class="table recent-table align-middle mb-0">
+
+            <thead>
+                <tr>
+                    <th>Request Title</th>
+                    <th>Created By</th>
+                    <th>Status</th>
+                    <th>Rejection Reason</th>
+                    <th>Date Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in requests %}
+
+                <tr>
+
+                    <!-- Request Title -->
+                    <td>
+                        <div class="request-title">
+                            <span class="request-file-icon">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </span>
+
+                            <strong>{{ item.title }}</strong>
+                        </div>
+                    </td>
+
+                    <!-- Created By -->
+                    <td>{{ item.creator.username }}</td>
+
+                    <!-- Status -->
+                    <td>
+
+                        {% if item.status == 'approved' %}
+
+                            <span class="status-badge status-approved">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Approved
+                            </span>
+
+                        {% elif item.status == 'rejected' %}
+
+                            <span class="status-badge status-rejected">
+                                <i class="bi bi-x-circle-fill"></i>
+                                Rejected
+                            </span>
+
+                        {% elif item.status == 'submitted' %}
+
+                            <span class="status-badge status-submitted">
+                                <i class="bi bi-clock-fill"></i>
+                                Submitted
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-draft">
+                                <i class="bi bi-pencil-fill"></i>
+                                Draft
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- Rejection Reason -->
+                    <td>
+                        {% if item.status == 'rejected' and item.rejection_reason %}
+                            <span class="text-danger">
+                                {{ item.rejection_reason }}
+                            </span>
+                        {% elif item.status == 'rejected' %}
+                            <span class="text-muted">No reason provided</span>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Date Created -->
+                    <td>{{ item.created_at|date:"d M Y" }}</td>
+
+                    <!-- Actions -->
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">
+
+                            <!-- View Details -->
+                            <a href="{% url 'request_detail' item.id %}"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                                Details
+                            </a>
+
+                            <!-- Edit Draft -->
+                            {% if item.creator == request.user and item.status == 'draft' %}
+
+                                <a href="{% url 'request_edit' item.id %}"
+                                   class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+                                </a>
+
+                            {% endif %}
+
+                            <!-- Delete Draft or Admin Delete -->
+                            {% if item.creator == request.user and item.status == 'draft' or request.user.is_admin %}
+
+                                <form method="POST"
+                                      action="{% url 'request_delete' item.id %}"
+                                      onsubmit="return confirm('Are you sure you want to delete this request?');">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="text-center py-5">
+
+        <i class="bi bi-inbox fs-1 text-muted"></i>
+
+        <h5 class="mt-3">No Requests Found</h5>
+
+        <p class="text-muted">
+            You haven't created any business requests yet.
+        </p>
+
+        <a href="{% url 'request_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>
+            Create Your First Request
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

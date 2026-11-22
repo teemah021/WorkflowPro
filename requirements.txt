@@ -1,0 +1,28 @@
+# Python dependencies for Django Approval System
+
+# Django
+Django>=5.0,<6.0
+psycopg2-binary>=2.9.9
+
+# Django REST Framework
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+
+# Development
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-django>=4.5.0
+coverage>=7.3.0
+
+# Code quality
+flake8>=6.1.0
+black>=23.12.0
+
+# Production server
+gunicorn>=21.2.0
+
+# Optional: Celery for async tasks
+# celery>=5.3.0
+# redis>=5.0.0

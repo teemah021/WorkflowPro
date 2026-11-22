@@ -1,0 +1,86 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Notifications | WorkflowPro{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="dashboard-title">Notifications</h2>
+        <p class="dashboard-subtitle">
+            View updates about your business requests.
+        </p>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Your Notifications</h5>
+
+            <span class="badge bg-primary">
+                {{ unread_count }} Unread
+            </span>
+        </div>
+
+        {% for item in notifications %}
+
+            <div class="border rounded p-3 mb-3
+                {% if not item.is_read %}bg-light{% endif %}">
+
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">{{ item.title }}</h6>
+
+                    {% if not item.is_read %}
+                        <span class="badge bg-warning text-dark">
+                            New
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary">
+                            Read
+                        </span>
+                    {% endif %}
+                </div>
+
+                <p class="mb-2">{{ item.message }}</p>
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+
+    <small class="text-muted">
+        {{ item.get_notification_type_display }}
+        |
+        {{ item.created_at|date:"M d, Y - h:i A" }}
+    </small>
+
+    {% if not item.is_read %}
+        <form method="POST"
+              action="{% url 'mark_notification_read' item.id %}">
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-sm btn-primary">
+                Mark as Read
+            </button>
+        </form>
+    {% endif %}
+
+</div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="text-center py-5">
+                <h5>No notifications yet</h5>
+                <p class="text-muted">
+                    Updates about your requests will appear here.
+                </p>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+
+{% extends 'base.html' %}
+
+{% block title %}New Request | WorkflowPro{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="dashboard-title">Create New Request</h2>
+        <p class="dashboard-subtitle">
+            Fill in the details below to create a business request.
+        </p>
+    </div>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>
+        Back to Dashboard
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm recent-requests-card">
+
+    <div class="card-header bg-white border-0 p-4">
+        <h5 class="fw-bold mb-1">Request Information</h5>
+        <p class="text-muted small mb-0">
+            Provide the title and description of your request.
+        </p>
+    </div>
+
+    <div class="card-body p-4">
+
+        {% if errors %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Please correct the following:</strong>
+                <ul class="mb-0 mt-2">
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label for="title" class="form-label fw-semibold">
+                    Request Title
+                </label>
+
+                <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    class="form-control"
+                    placeholder="e.g. Purchase of office equipment"
+                    value="{{ title_value }}"
+                    maxlength="255"
+                    required
+                >
+
+                <small class="text-muted">
+                    Enter a short title describing your request.
+                </small>
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="form-label fw-semibold">
+                    Request Description
+                </label>
+
+                <textarea
+                    name="description"
+                    id="description"
+                    class="form-control"
+                    rows="6"
+                    placeholder="Explain your request in detail..."
+                    required
+                >{{ description_value }}</textarea>
+
+                <small class="text-muted">
+                    Provide enough information for the manager to review your request.
+                </small>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex flex-wrap gap-2 justify-content-end">
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="draft"
+                    class="btn btn-outline-secondary px-4"
+                >
+                    <i class="bi bi-save me-2"></i>
+                    Save as Draft
+                </button>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="submit"
+                    class="btn btn-primary px-4"
+                >
+                    <i class="bi bi-send me-2"></i>
+                    Submit for Approval
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

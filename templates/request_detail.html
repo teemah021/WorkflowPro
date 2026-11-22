@@ -1,0 +1,98 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Request Details | WorkflowPro{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="dashboard-title">Request Details</h2>
+        <p class="dashboard-subtitle">
+            View the complete information about this request.
+        </p>
+    </div>
+
+    <a href="{% url 'my_requests' %}" class="btn btn-outline-secondary">
+        Back to My Requests
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <h4 class="mb-3">{{ item.title }}</h4>
+
+        <hr>
+
+        <div class="mb-3">
+            <strong>Description:</strong>
+            <p class="mt-2">{{ item.description|linebreaks }}</p>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Created By:</strong>
+                <p>{{ item.creator.username }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Status:</strong>
+                <p>{{ item.get_status_display }}</p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Assigned To:</strong>
+                <p>
+                    {% if item.assigned_to %}
+                        {{ item.assigned_to.username }}
+                    {% else %}
+                        Not assigned
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Reviewed By:</strong>
+                <p>
+                    {% if item.reviewed_by %}
+                        {{ item.reviewed_by.username }}
+                    {% else %}
+                        Not reviewed
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Date Created:</strong>
+                <p>{{ item.created_at|date:"M d, Y H:i" }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Last Updated:</strong>
+                <p>{{ item.updated_at|date:"M d, Y H:i" }}</p>
+            </div>
+        </div>
+
+        {% if item.reviewed_at %}
+            <div class="mb-3">
+                <strong>Review Date:</strong>
+                <p>{{ item.reviewed_at|date:"M d, Y H:i" }}</p>
+            </div>
+        {% endif %}
+
+        {% if item.status == 'rejected' %}
+            <div class="alert alert-danger mt-3">
+                <strong>Rejection Reason:</strong>
+                <p class="mb-0">{{ item.rejection_reason|default:"No reason provided." }}</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
